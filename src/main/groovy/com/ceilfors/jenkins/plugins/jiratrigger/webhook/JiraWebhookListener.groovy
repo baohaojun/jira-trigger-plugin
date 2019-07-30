@@ -9,4 +9,5 @@ interface JiraWebhookListener {
     void commentCreated(WebhookCommentEvent commentEvent, JSONObject issueJsonObject)
 
     void changelogCreated(WebhookChangelogEvent changelogEvent, JSONObject issueJsonObject)
+    void issueCreated(WebhookIssueCreatedEvent issueCreatedEvent, JSONObject issueJsonObject)
 }

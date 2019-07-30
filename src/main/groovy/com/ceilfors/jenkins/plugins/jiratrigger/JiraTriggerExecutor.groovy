@@ -6,6 +6,7 @@ import com.atlassian.jira.rest.client.api.domain.Comment
 import com.atlassian.jira.rest.client.api.domain.Issue
 import com.ceilfors.jenkins.plugins.jiratrigger.webhook.JiraWebhookListener
 import com.ceilfors.jenkins.plugins.jiratrigger.webhook.WebhookChangelogEvent
+import com.ceilfors.jenkins.plugins.jiratrigger.webhook.WebhookIssueCreatedEvent
 import com.ceilfors.jenkins.plugins.jiratrigger.webhook.WebhookCommentEvent
 import com.google.inject.Singleton
 import groovy.util.logging.Log
@@ -53,6 +54,12 @@ class JiraTriggerExecutor implements JiraWebhookListener {
         fireListeners(scheduledProjects, changelogEvent.issue)
     }
 
+    @Override
+    void issueCreated(WebhookIssueCreatedEvent issueCreatedEvent, JSONObject issueJsonObject) {
+        List<AbstractProject> scheduledProjects = scheduleBuilds(issueCreatedEvent.issue, issueJsonObject)
+        fireListeners(scheduledProjects, issueCreatedEvent.issue)
+    }
+
     private void fireListeners(List<AbstractProject> scheduledProjects, Issue issue) {
         if (scheduledProjects) {
             jiraTriggerListeners*.buildScheduled(issue, scheduledProjects)
@@ -63,6 +70,10 @@ class JiraTriggerExecutor implements JiraWebhookListener {
 
     List<AbstractProject> scheduleBuilds(Issue issue, JSONObject issueJsonObject, Comment comment) {
         scheduleBuildsInternal(JiraCommentTrigger, issue, issueJsonObject, comment)
+    }
+
+    List<AbstractProject> scheduleBuilds(Issue issue, JSONObject issueJsonObject) {
+        scheduleBuildsInternal(JiraIssueCreatedTrigger, issue, issueJsonObject, issue.key)
     }
 
     List<AbstractProject> scheduleBuilds(Issue issue, JSONObject issueJsonObject, ChangelogGroup changelogGroup) {
