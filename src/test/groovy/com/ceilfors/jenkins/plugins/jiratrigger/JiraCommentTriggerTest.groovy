@@ -9,6 +9,7 @@ import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
 import spock.lang.Specification
 import spock.lang.Unroll
+import org.codehaus.jettison.json.JSONObject
 
 import static com.ceilfors.jenkins.plugins.jiratrigger.TestUtils.createIssue
 
@@ -43,7 +44,7 @@ class JiraCommentTriggerTest extends Specification {
         trigger.job = project
 
         when:
-        boolean result = trigger.run(createIssue('TEST-123'), comment)
+        boolean result = trigger.run(createIssue('TEST-123'), new JSONObject(), comment)
 
         then:
         result
@@ -65,7 +66,7 @@ class JiraCommentTriggerTest extends Specification {
         trigger.job = project
 
         when:
-        boolean result = trigger.run(createIssue('TEST-123'), comment)
+        boolean result = trigger.run(createIssue('TEST-123'), new JSONObject(), comment)
 
         then:
         !result

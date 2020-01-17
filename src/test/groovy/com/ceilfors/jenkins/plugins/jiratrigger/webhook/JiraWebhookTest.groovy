@@ -48,7 +48,7 @@ class JiraWebhookTest extends Specification {
         jiraWebhook.processEvent(Mock(StaplerRequest), createIssueStatusUpdatedEvent())
 
         then:
-        1 * listener.changelogCreated(_) >> { args -> changelogEvent = args[0] }
+        1 * listener.changelogCreated(_, _) >> { args -> changelogEvent = args[0] }
         expect changelogEvent.changelog.items.toList(), equalTo([
                 new ChangelogItem(FieldType.JIRA, 'resolution', '1', 'Fixed', '10000', 'Done'),
                 new ChangelogItem(FieldType.JIRA, 'status', '10000', 'To Do', '10001', 'Done'),
@@ -70,7 +70,7 @@ class JiraWebhookTest extends Specification {
         jiraWebhook.processEvent(staplerRequest, createIssueUpdatedWithCommentEvent())
 
         then:
-        1 * listener.commentCreated(_) >> { args -> commentEvent = args[0] }
+        1 * listener.commentCreated(_, _) >> { args -> commentEvent = args[0] }
         expect commentEvent.userId, equalTo('adminId')
         expect commentEvent.userKey, equalTo('adminKey')
     }
@@ -86,7 +86,7 @@ class JiraWebhookTest extends Specification {
         jiraWebhook.processEvent(Mock(StaplerRequest), createIssueCreatedEvent())
 
         then:
-        0 * listener.commentCreated(_)
+        0 * listener.commentCreated(_, _)
     }
 
     def 'Should fire comment created event when an issue is updated with comment'() {
@@ -102,7 +102,7 @@ class JiraWebhookTest extends Specification {
         jiraWebhook.processEvent(Mock(StaplerRequest), createIssueUpdatedWithCommentEvent())
 
         then:
-        1 * listener.commentCreated(_) >> { args -> commentEvent = args[0] }
+        1 * listener.commentCreated(_, _) >> { args -> commentEvent = args[0] }
         expect commentEvent.comment.body, is('comment body')
         expect commentEvent.comment.author.name, is('admin')
         expect commentEvent.webhookEventType, is(JiraWebhook.ISSUE_UPDATED_WEBHOOK_EVENT)
@@ -121,7 +121,7 @@ class JiraWebhookTest extends Specification {
         jiraWebhook.processEvent(Mock(StaplerRequest), createIssueUpdatedEvent())
 
         then:
-        0 * listener.commentCreated(_)
+        0 * listener.commentCreated(_, _)
     }
 
     def 'Should fire comment created event when a comment is added in JIRA Cloud'() {
@@ -136,7 +136,7 @@ class JiraWebhookTest extends Specification {
         jiraWebhook.processEvent(Mock(StaplerRequest), createCloudCommentAddedEvent())
 
         then:
-        1 * listener.commentCreated(_) >> { args -> commentEvent = args[0] }
+        1 * listener.commentCreated(_, _) >> { args -> commentEvent = args[0] }
         expect commentEvent.comment.body, is('comment body')
         expect commentEvent.comment.author.name, is('admin')
         expect commentEvent.webhookEventType, is(JiraWebhook.COMMENT_CREATED_WEBHOOK_EVENT)
